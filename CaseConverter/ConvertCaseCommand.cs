@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using CaseConverter.Converters;
@@ -56,46 +55,17 @@ namespace CaseConverter
         {
             var dte = ServiceProvider.GetService(typeof(DTE)) as DTE;
             var doc = dte.Documents.Item("tps.json");
-            var textDocument = dte.ActiveDocument.Object("TextDocument") as TextDocument;
-            if (textDocument != null)
+            if (dte.ActiveDocument.Object("TextDocument") is TextDocument textDocument)
             {
                 var convertPatterns = ((CaseConverterPackage)Package).GetGeneralOption().Patterns.ToList();
 
                 var selection = textDocument.Selection;
                 if (selection.IsEmpty == false)
                 {
-                    string pasteJson;
-                    string replace;
                     var selectedText = selection.Text;
-                    if (selectedText[0] == '"')
-                    {
-                        pasteJson = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\": {selectedText}";
-                        if (Path.GetExtension(dte.ActiveDocument.FullName) == ".xaml")
-                        {
-                            //replace = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\"";
-                            replace = $"\"{{l:Localize {{x:Static trackMan:tps+{StringCaseConverter.Convert(selectedText, convertPatterns)}}}}}\"";
-                            //"{l:Localize {x:Static trackMan:tps+puttingTopView.trajectory}}"
-                        }
-                        else
-                        {
-                            //replace = $"{StringCaseConverter.Convert(selectedText, convertPatterns)}.Text()";
-                            replace = $"tps.{StringCaseConverter.Convert(selectedText, convertPatterns)}.Text()";
-                        }
-                    }
-                    else
-                    {
-                        pasteJson = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\": \"{selectedText}\"";
-                        if (Path.GetExtension(dte.ActiveDocument.FullName) == ".xaml")
-                        {
-                            replace = $"{StringCaseConverter.Convert(selectedText, convertPatterns)}";
-                        }
-                        else
-                        {
-                            replace = $"{StringCaseConverter.Convert(selectedText, convertPatterns)}.Text()";
-                        }
-                    }
-
+                    var pasteJson = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\": {selectedText}";
                     Clipboard.SetData(DataFormats.Text, pasteJson);
+                    var replace = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\"";
                     selection.ReplaceText(selectedText, replace);
                     doc.Activate();
                 }
