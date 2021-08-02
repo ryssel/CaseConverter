@@ -60,38 +60,40 @@ namespace CaseConverter.Converters
         /// <returns>文字列のパターン</returns>
         internal static StringCasePattern GetCasePattern(string input)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return StringCasePattern.CamelCase;
-            }
+            // Only use CamelCase
+            return StringCasePattern.CamelCase;
+            //if (string.IsNullOrEmpty(input))
+            //{
+            //    return StringCasePattern.CamelCase;
+            //}
 
-            if (input.Contains('_'))
-            {
-                if (input.Length == 1)
-                {
-                    return StringCasePattern.SnakeCase;
-                }
-                else if (input.All(x => char.IsUpper(x) || x == '_'))
-                {
-                    return StringCasePattern.ScreamingSnakeCase;
-                }
-                else
-                {
-                    return char.IsUpper(input[0]) ? StringCasePattern.PascalSnakeCase : StringCasePattern.SnakeCase;
-                }
-            }
-            else if (input.Contains('-'))
-            {
-                return StringCasePattern.KebabCase;
-            }
-            else if (char.IsUpper(input[0]))
-            {
-                return 1 < input.Length && input.Skip(1).All(x => char.IsUpper(x)) ? StringCasePattern.ScreamingSnakeCase : StringCasePattern.PascalCase;
-            }
-            else
-            {
-                return StringCasePattern.CamelCase;
-            }
+            //if (input.Contains('_'))
+            //{
+            //    if (input.Length == 1)
+            //    {
+            //        return StringCasePattern.SnakeCase;
+            //    }
+            //    else if (input.All(x => char.IsUpper(x) || x == '_'))
+            //    {
+            //        return StringCasePattern.ScreamingSnakeCase;
+            //    }
+            //    else
+            //    {
+            //        return char.IsUpper(input[0]) ? StringCasePattern.PascalSnakeCase : StringCasePattern.SnakeCase;
+            //    }
+            //}
+            //else if (input.Contains('-'))
+            //{
+            //    return StringCasePattern.KebabCase;
+            //}
+            //else if (char.IsUpper(input[0]))
+            //{
+            //    return 1 < input.Length && input.Skip(1).All(x => char.IsUpper(x)) ? StringCasePattern.ScreamingSnakeCase : StringCasePattern.PascalCase;
+            //}
+            //else
+            //{
+            //    return StringCasePattern.CamelCase;
+            //}
         }
 
         /// <summary>
