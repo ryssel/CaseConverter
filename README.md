@@ -5,3 +5,6 @@ This is a simple visual studio extension. It converts a selected text between sn
 
 ## Getting Started
 See [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=munyabe.CaseConverter) for additional info on how to use this extension.
+## Debugging
+Add Start external program: path to Visual Studio devenv.exe
+Add Command line arguments: /rootsuffix Exp

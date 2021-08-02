@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
 using CaseConverter.Converters;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
@@ -8,26 +9,31 @@ namespace CaseConverter
 {
     /// <summary>
     /// 文字列をスネークケース⇒キャメルケース⇒パスカルケースの順に変換するコマンドです。
+    /// This command converts a character string in the order of snake case ⇒ camel case ⇒ pascal case.
     /// </summary>
     internal sealed class ConvertCaseCommand : CommandBase
     {
         /// <summary>
         /// コマンドのIDです。
+        /// The ID of the command.
         /// </summary>
         public const int CommandId = 0x0100;
 
         /// <summary>
         /// コマンドメニューグループのIDです。
+        /// The ID of the command menu group.
         /// </summary>
         public static readonly Guid CommandSet = new Guid("f038e966-3a02-4eef-bfad-cd8fab3c4d6d");
 
         /// <summary>
         /// シングルトンのインスタンスを取得します。
+        /// Get an instance of a singleton.
         /// </summary>
         public static ConvertCaseCommand Instance { get; private set; }
 
         /// <summary>
         /// インスタンスを初期化します。
+        /// Initialize the instance.
         /// </summary>
         /// <param name="package">コマンドを提供するパッケージ</param>
         private ConvertCaseCommand(Package package) : base(package, CommandId, CommandSet)
@@ -36,8 +42,9 @@ namespace CaseConverter
 
         /// <summary>
         /// このコマンドのシングルトンのインスタンスを初期化します。
+        /// Initializes a singleton instance of this command.
         /// </summary>
-        /// <param name="package">コマンドを提供するパッケージ</param>
+        /// <param name="package">コマンドを提供するパッケージPackage that provides commands</param>
         public static void Initialize(Package package)
         {
             Instance = new ConvertCaseCommand(package);
@@ -47,8 +54,8 @@ namespace CaseConverter
         protected override void Execute(object sender, EventArgs e)
         {
             var dte = ServiceProvider.GetService(typeof(DTE)) as DTE;
-            var textDocument = dte.ActiveDocument.Object("TextDocument") as TextDocument;
-            if (textDocument != null)
+            var doc = dte.Documents.Item("tps.json");
+            if (dte.ActiveDocument.Object("TextDocument") is TextDocument textDocument)
             {
                 var convertPatterns = ((CaseConverterPackage)Package).GetGeneralOption().Patterns.ToList();
 
@@ -56,7 +63,11 @@ namespace CaseConverter
                 if (selection.IsEmpty == false)
                 {
                     var selectedText = selection.Text;
-                    selection.ReplaceText(selectedText, StringCaseConverter.Convert(selectedText, convertPatterns));
+                    var pasteJson = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\": {selectedText}";
+                    Clipboard.SetData(DataFormats.Text, pasteJson);
+                    var replace = $"\"{StringCaseConverter.Convert(selectedText, convertPatterns)}\"";
+                    selection.ReplaceText(selectedText, replace);
+                    doc.Activate();
                 }
                 else
                 {
@@ -77,7 +88,14 @@ namespace CaseConverter
                         var right = endPoint.AbsoluteCharOffset - point.AbsoluteCharOffset - trimCount;
                         selection.CharRight(true, right);
 
-                        selection.ReplaceText(word, convertedWord);
+                        //selection.ReplaceText(word, convertedWord);
+                        //"Her er en fisk"
+                        var pasteJson = $"\"{StringCaseConverter.Convert(word, convertPatterns)}\": {word}";
+                        Clipboard.SetData(DataFormats.Text, pasteJson);
+                        var replace = $"\"{StringCaseConverter.Convert(word, convertPatterns)}\"";
+                        selection.ReplaceText(word, replace);
+                        //selection.Copy();
+                        doc.Activate();
                     }
                 }
             }
@@ -85,6 +103,7 @@ namespace CaseConverter
 
         /// <summary>
         /// 文字列の終了位置を作成します。
+        /// Creates the end position of the string.
         /// </summary>
         private static EditPoint CreateEndPoint(VirtualPoint point, EditPoint startPoint)
         {
@@ -101,6 +120,7 @@ namespace CaseConverter
 
         /// <summary>
         /// 文字列の開始位置を作成します。
+        /// Creates the starting position of the string.
         /// </summary>
         private static EditPoint CreateStartPoint(VirtualPoint point)
         {
@@ -121,6 +141,7 @@ namespace CaseConverter
 
         /// <summary>
         /// 指定の位置の左の文字を取得します。
+        /// Gets the character to the left of the specified position.
         /// </summary>
         private static string GetLeftText(VirtualPoint point, int count)
         {

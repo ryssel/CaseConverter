@@ -8,16 +8,19 @@ namespace CaseConverter
 {
     /// <summary>
     /// 拡張機能として登録するコマンドの基底クラスです。
+    /// It is the base class of the command to be registered as an extension.
     /// </summary>
     internal abstract class CommandBase
     {
         /// <summary>
         /// コマンドを提供するパッケージを取得します。
+        /// Gets a package that provides commands.
         /// </summary>
         protected Package Package { get; }
 
         /// <summary>
         /// サービスプロバイダーを取得します。
+        /// Get service provider.
         /// </summary>
         protected IServiceProvider ServiceProvider
         {
@@ -53,11 +56,13 @@ namespace CaseConverter
 
         /// <summary>
         /// コマンドを実行します。
+        /// Execute the command.
         /// </summary>
         protected abstract void Execute(object sender, EventArgs e);
 
         /// <summary>
         /// コマンドを実行した際のコールバックです。
+        /// Callback when you execute the command.
         /// </summary>
         /// <param name="sender">イベントの発行者</param>
         /// <param name="e">イベント引数</param>
@@ -78,10 +83,11 @@ namespace CaseConverter
 
         /// <summary>
         /// メッセージボックスを表示します。
+        /// /// Display the message box.
         /// </summary>
-        /// <param name="title">メッセージのタイトル</param>
-        /// <param name="message">表示するメッセージ</param>
-        /// <param name="icon">表示するアイコン</param>
+        /// <param name="title">メッセージのタイトルMessage title</param>
+        /// <param name="message">表示するメッセージMessage to display</param>
+        /// <param name="icon">表示するアイコンDisplay icon</param>
         private void ShowMessageBox(string title, string message, OLEMSGICON icon)
         {
             VsShellUtilities.ShowMessageBox(
