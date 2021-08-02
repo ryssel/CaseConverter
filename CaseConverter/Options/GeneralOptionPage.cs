@@ -3,12 +3,12 @@
 namespace CaseConverter.Options
 {
     /// <summary>
-    /// 全般設定のオプションのページです。
+    /// It is an option page for general settings.
     /// </summary>
     public class GeneralOptionPage : DialogPage
     {
         /// <summary>
-        /// 全般設定のオプションです。
+        /// It is an option for general settings.
         /// </summary>
         private readonly GeneralOption _option = new GeneralOption();
 
